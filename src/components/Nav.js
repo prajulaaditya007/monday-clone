@@ -2,9 +2,11 @@ import React from 'react';
 
 const Nav = () => {
     return (
-        <div>
-            Nav
-        </div>
+        <nav>
+            <div className="logo-container">
+                <img src={logo} alt="logo"/>
+            </div>
+        </nav>
     );
 }
 
