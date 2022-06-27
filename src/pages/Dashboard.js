@@ -12,7 +12,7 @@ const Dashboard = () => {
             avatar:'https://media-exp2.licdn.com/dms/image/C5603AQFmxlxH5Un1Xw/profile-displayphoto-shrink_200_200/0/1624988949357?e=1661990400&v=beta&t=T28Th010Cm644u6UQI9ZSQxGT-uu1_yU_9PhbeBmqyg',
             status:'done',
             priority: 5,
-            progress: 100,
+            progress: 95,
             description:'Learn how to work with NFTs safely, how to know one is not genuine',
             timestamp: '2022-06-26T19:40:32+0000'
         },
@@ -42,6 +42,15 @@ const Dashboard = () => {
         }
     ]
 
+    const colors = [
+        'rgb(255,179,186)',
+        'rgb(255,223,186)',
+        'rgb(255,225,186)',
+        'rgb(186,255,201)',
+        'rgb(186,255,255)'
+
+    ]
+
     const uniqueCategories = [
         ...new Set(tickets?.map(({ category }) => category))
         // getting categories from the array of objects above, using Set to get unique values
@@ -59,7 +68,7 @@ const Dashboard = () => {
                             .map((filteredTicket, _index) =>(
                                 <TicketCard
                                 id={_index}
-                                color={filteredTicket.color}
+                                color={colors[categoryIndex] || colors[0]}
                                 ticket={filteredTicket}
                                 />
                             ))

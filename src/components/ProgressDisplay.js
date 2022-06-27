@@ -1,9 +1,11 @@
 import React from 'react';
 
-const ProgressDisplay = () => {
+const ProgressDisplay = ({progress}) => {
     return (
-        <div>
-            Progress Display
+        <div className="progress-display">
+            <div className="progress-bar">
+                <div style={{width: progress+ '%'}} className="progress-indicator"></div>
+            </div>
         </div>
     );
 }
