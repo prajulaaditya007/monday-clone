@@ -1,84 +1,68 @@
-import React from 'react';
-import TicketCard from "../components/TicketCard";
+import TicketCard from '../components/TicketCard'
+import { useState, useEffect, useContext } from 'react'
+import axios from 'axios'
+import CategoriesContext from '../context'
 
 const Dashboard = () => {
+    const [tickets, setTickets] = useState(null)
+    const { categories, setCategories } = useContext(CategoriesContext)
 
-    const tickets = [
-        {
-            category: 'Q1 2022',
-            color:'red',
-            title:'NFT Safety 101',
-            owner:'Prajul Sahu',
-            avatar:'https://media-exp2.licdn.com/dms/image/C5603AQFmxlxH5Un1Xw/profile-displayphoto-shrink_200_200/0/1624988949357?e=1661990400&v=beta&t=T28Th010Cm644u6UQI9ZSQxGT-uu1_yU_9PhbeBmqyg',
-            status:'done',
-            priority: 5,
-            progress: 95,
-            description:'Learn how to work with NFTs safely, how to know one is not genuine',
-            timestamp: '2022-06-26T19:40:32+0000'
-        },
-        {
-            category: 'Q1 2022',
-            color:'red',
-            title:'Sell AI Models',
-            owner:'Prajul Sahu',
-            avatar:'https://media-exp2.licdn.com/dms/image/C5603AQFmxlxH5Un1Xw/profile-displayphoto-shrink_200_200/0/1624988949357?e=1661990400&v=beta&t=T28Th010Cm644u6UQI9ZSQxGT-uu1_yU_9PhbeBmqyg',
-            status:'pending',
-            priority: 2,
-            progress: 30,
-            description:'Learn more about AI',
-            timestamp: '2022-06-30T19:40:32+0000'
-        },
-        {
-            category: 'Q2 2022',
-            color:'blue',
-            title:'MERN Stack App',
-            owner:'Prajul Sahu',
-            avatar:'https://media-exp2.licdn.com/dms/image/C5603AQFmxlxH5Un1Xw/profile-displayphoto-shrink_200_200/0/1624988949357?e=1661990400&v=beta&t=T28Th010Cm644u6UQI9ZSQxGT-uu1_yU_9PhbeBmqyg',
-            status:'in progress',
-            priority: 3,
-            progress: 70,
-            description:'Code an app in MERN stack',
-            timestamp: '2022-06-10T19:40:32+0000'
-        }
-    ]
+    useEffect(async () => {
+        const response = await axios.get('http://localhost:8000/tickets')
+
+        //wasn't sure how to get the Documet Id with the object.. open to better suggestions
+        const dataObject = response.data.data
+
+        const arrayOfKeys = Object.keys(dataObject)
+        const arrayOfData = Object.keys(dataObject).map((key) => dataObject[key])
+        const formattedArray = []
+        arrayOfKeys.forEach((key, index) => {
+            const formmatedData = { ...arrayOfData[index] }
+            formmatedData['documentId'] = key
+            formattedArray.push(formmatedData)
+        })
+
+        setTickets(formattedArray)
+    }, [])
+
+    useEffect(() => {
+        setCategories([...new Set(tickets?.map(({ category }) => category))])
+    }, [tickets])
 
     const colors = [
         'rgb(255,179,186)',
         'rgb(255,223,186)',
-        'rgb(255,225,186)',
+        'rgb(255,255,186)',
         'rgb(186,255,201)',
-        'rgb(186,255,255)'
-
+        'rgb(186,225,255)',
     ]
 
     const uniqueCategories = [
-        ...new Set(tickets?.map(({ category }) => category))
-        // getting categories from the array of objects above, using Set to get unique values
+        ...new Set(tickets?.map(({ category }) => category)),
     ]
-    console.log(uniqueCategories)
 
     return (
         <div className="dashboard">
             <h1>My Projects</h1>
             <div className="ticket-container">
-                {tickets && uniqueCategories?.map((uniqueCategory, categoryIndex) =>(
-                    <div key={categoryIndex}>
-                        <h3>{uniqueCategory}</h3>
-                        {tickets.filter(ticket=> ticket.category === uniqueCategory)
-                            .map((filteredTicket, _index) =>(
-                                <TicketCard
-                                id={_index}
-                                color={colors[categoryIndex] || colors[0]}
-                                ticket={filteredTicket}
-                                />
-                            ))
-
-                        }
-                    </div>
-                ))}
+                {tickets &&
+                    uniqueCategories?.map((uniqueCategory, categoryIndex) => (
+                        <div key={categoryIndex}>
+                            <h3>{uniqueCategory}</h3>
+                            {tickets
+                                .filter((ticket) => ticket.category === uniqueCategory)
+                                .map((filteredTicket, _index) => (
+                                    <TicketCard
+                                        id={_index}
+                                        color={colors[categoryIndex] || colors[0]}
+                                        ticket={filteredTicket}
+                                    />
+                                ))}
+                        </div>
+                    ))}
             </div>
         </div>
-    );
+    )
 }
 
-export default Dashboard;
+export default Dashboard
